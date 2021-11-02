@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.DocumentStoredFieldVisitor;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.DirectoryReader;
@@ -16,7 +15,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.StoredFieldVisitor;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
@@ -31,11 +29,16 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 import org.apache.lucene.util.BytesRef;
 
+/**
+ * http://makble.com/what-is-term-vector-in-lucene
+ * @author claud
+ *
+ */
 public class TestTermVector {
-    private static Analyzer analyzer = new StandardAnalyzer();
-    private static IndexWriterConfig config = new IndexWriterConfig(analyzer);
-    private static RAMDirectory ramDirectory = new RAMDirectory();
-    private static IndexWriter indexWriter;
+    private static Analyzer          analyzer     = new StandardAnalyzer();
+    private static IndexWriterConfig config       = new IndexWriterConfig(analyzer);
+    private static RAMDirectory      ramDirectory = new RAMDirectory();
+    private static IndexWriter       indexWriter;
 
     public static void main(String[] args) {
         FieldType t = new FieldType();
@@ -61,14 +64,16 @@ public class TestTermVector {
             indexWriter = new IndexWriter(ramDirectory, config);
             indexWriter.addDocument(doc);
             indexWriter.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         
         try {
-            IndexReader idxReader = DirectoryReader.open(ramDirectory);
+            IndexReader   idxReader   = DirectoryReader.open(ramDirectory);
             IndexSearcher idxSearcher = new IndexSearcher(idxReader);
-            Terms terms = idxReader.getTermVector(0, "title");
+            // The returned Fields instance acts like a single-document 
+            // inverted index (the docID will be 0).
+            Terms  terms  = idxReader.getTermVector(0, "title");
             Fields fields = idxReader.getTermVectors(0);
             System.out.println("|" + fields.size());
             if (terms != null) {

@@ -8,7 +8,7 @@
         <groupId>be.ictjob.clep</groupId>
         <artifactId>LuceneJUnitParent</artifactId>
         <version>1</version>
-        <relativePath>..\LuceneJUnitParent</relativePath>
+        <relativePath>..\LuceneJUnitParent\pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
